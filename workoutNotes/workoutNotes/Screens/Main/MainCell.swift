@@ -22,6 +22,10 @@ final class MainCell: UICollectionViewCell {
     private let dateLabel = UILabel()
     private let separatorView = UIView()
     private let countExerciseImage = UIImageView() // change name
+    private let exerciseLabel = UILabel()
+    private let timerImage = UIImageView()
+    private let timerLabel = UILabel()
+    private let chevronImage = UIImageView()
 
     // MARK: - Init
 
@@ -33,6 +37,10 @@ final class MainCell: UICollectionViewCell {
         setupDate()
         setupSeparator()
         setupExerciseCountImage()
+        setupExerciseLabel()
+        setupTimerImage()
+        setupTimerLabel()
+        setupChevronImage()
     }
     
     required init?(coder: NSCoder) {
@@ -76,21 +84,56 @@ final class MainCell: UICollectionViewCell {
         contentView.addSubview(countExerciseImage)
     }
 
+    private func setupExerciseLabel() {
+        exerciseLabel.textColor = .white
+        exerciseLabel.font = .systemFont(ofSize: 12, weight: .medium)
+        exerciseLabel.textAlignment = .left
+
+        contentView.addSubview(exerciseLabel)
+    }
+
+    private func setupTimerImage() {
+        timerImage.image = UIImage(systemName: "stopwatch")
+        timerImage.tintColor = .white
+
+        contentView.addSubview(timerImage)
+    }
+
+    private func setupTimerLabel() {
+        timerLabel.textColor = .white
+        timerLabel.font = .systemFont(ofSize: 12, weight: .medium)
+        timerLabel.textAlignment = .left
+
+        contentView.addSubview(timerLabel)
+    }
+
+    private func setupChevronImage() {
+        chevronImage.image = UIImage(systemName: "chevron.right")
+        chevronImage.tintColor = .white
+
+        contentView.addSubview(chevronImage)
+    }
+
     // MARK: - Configure
 
-    public func configure(title: String) {
+    public func configure(
+        title: String,
+        exerciseCount: Int,
+        minutes: Int
+    ) {
         titleLabel.text = title
         dateLabel.text = "Today, 9:05 AM"
+        exerciseLabel.text = "\(exerciseCount) Exercises"
+        timerLabel.text = "\(minutes) mins"
     }
 
     // MARK: - Layout
 
     public override func layoutSubviews() {
 
-        let maxAvailableWidth = contentView.frame.width / 2
         let titleLabelSize = titleLabel.sizeThatFits(
-            .init(
-                width: maxAvailableWidth,
+            CGSize(
+                width: contentView.frame.width / 2,
                 height: 40
             )
         )
@@ -118,9 +161,53 @@ final class MainCell: UICollectionViewCell {
 
         countExerciseImage.frame = .init(
             x: 10,
-            y: separatorView.frame.maxY + 3,
+            y: separatorView.frame.maxY + 10,
             width: 24,
             height: 24
+        )
+
+        let exerciseLabelSize = exerciseLabel.sizeThatFits(
+            CGSize(
+                width: contentView.frame.width / 2,
+                height: 30
+            )
+        )
+        exerciseLabel.frame = .init(
+            origin: .init(
+                x: countExerciseImage.frame.maxX + 5,
+                y: countExerciseImage.frame.midY - exerciseLabelSize.height / 2
+            ),
+            size: exerciseLabelSize
+        )
+
+        timerImage.frame = .init(
+            origin: .init(
+                x: exerciseLabel.frame.maxX + 20,
+                y: countExerciseImage.frame.origin.y
+            ),
+            size: CGSize(width: 24, height: 24)
+        )
+
+        let timerLabelSize = timerLabel.sizeThatFits(
+            CGSize(
+                width: contentView.frame.width / 2,
+                height: 30
+            )
+        )
+        timerLabel.frame = .init(
+            origin: .init(
+                x: timerImage.frame.maxX + 5,
+                y: timerImage.frame.midY - timerLabelSize.height / 2
+            ),
+            size: timerLabelSize
+        )
+
+        chevronImage.frame = .init(
+            origin: .init(
+                x: contentView.frame.maxX - 12 - 10,
+                y: timerImage.frame.origin.y
+            ),
+            size: CGSize(width: 10, height: 12)
         )
     }
 }
