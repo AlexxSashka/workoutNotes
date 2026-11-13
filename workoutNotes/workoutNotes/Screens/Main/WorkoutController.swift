@@ -11,7 +11,7 @@ class WorkoutController: UIViewController {
         static let itemHeight: CGFloat = 40
     }
 
-    private var testData: [String] = []
+    private var testData: [String] = ["Тест"]
 
     // MARK: - Subviews
 
@@ -146,7 +146,11 @@ extension WorkoutController: UICollectionViewDataSource{
             return UICollectionViewCell()
         }
 
-        cell.configure(title: testData[indexPath.item])
+        cell.configure(
+            title: testData[indexPath.item],
+            exerciseCount: 5,
+            minutes: 40
+        )
 
         return cell
     }
@@ -161,7 +165,7 @@ extension WorkoutController: UICollectionViewDelegateFlowLayout {
     ) -> CGSize {
         return CGSize(
             width: view.bounds.width - Constants.cellHorizontalPadding * 2,
-            height: 100
+            height: 110
         )
     }
 
