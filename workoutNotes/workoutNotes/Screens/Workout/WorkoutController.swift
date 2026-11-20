@@ -128,7 +128,7 @@ class WorkoutController: UIViewController {
             let workout = WorkoutModel(
                 title: addText,
                 date: .now,
-                durationMinutes: 0
+                durationMinutes: nil
             )
             modelContext.insert(workout)
 
@@ -192,8 +192,10 @@ extension WorkoutController: UICollectionViewDelegateFlowLayout {
 
     func collectionView(
         _ collectionView: UICollectionView,
-        didSelectItemAt indexPath: IndexPath) {
-            print("Нажали на \(workouts[indexPath.item].title)")
+        didSelectItemAt indexPath: IndexPath
+    ) {
+        let detailController = WorkoutDetailController(workout: workouts[indexPath.item])
+        navigationController?.pushViewController(detailController, animated: true)
     }
 }
 
