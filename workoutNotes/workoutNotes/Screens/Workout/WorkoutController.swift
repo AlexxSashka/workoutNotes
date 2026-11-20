@@ -197,6 +197,31 @@ extension WorkoutController: UICollectionViewDelegateFlowLayout {
         let detailController = WorkoutDetailController(workout: workouts[indexPath.item])
         navigationController?.pushViewController(detailController, animated: true)
     }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        contextMenuConfigurationForItemAt indexPath: IndexPath,
+        point: CGPoint
+    ) -> UIContextMenuConfiguration? {
+
+        return UIContextMenuConfiguration(
+            identifier: nil,
+            previewProvider: nil
+        ) { [weak self] _ in
+            let deleteAction = UIAction(
+                title: "Удалить",
+                image: UIImage(systemName: "trash.fill"),
+                attributes: .destructive
+            ) { [weak self] _ in
+                self?.deleteWorkout(indexPath: indexPath)
+            }
+
+            return UIMenu(
+                title: "",
+                children: [deleteAction]
+            )
+        }
+    }
 }
 
     // MARK: - Work with SwiftData
@@ -209,5 +234,20 @@ private extension WorkoutController {
         )
         workouts = (try? modelContext.fetch(descriptor)) ?? []
         collectionView.reloadData()
+    }
+
+    private func deleteWorkout(indexPath: IndexPath) {
+
+        let workout = workouts[indexPath.item]
+
+        modelContext.delete(workout)
+
+        do {
+            try modelContext.save()
+            workouts.remove(at: indexPath.item)
+            collectionView.deleteItems(at: [indexPath])
+        } catch {
+            print("Ошибка удаления \(error)")
+        }
     }
 }
