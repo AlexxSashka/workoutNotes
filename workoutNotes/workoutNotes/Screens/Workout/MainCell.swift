@@ -3,7 +3,7 @@
 //
 import UIKit
 
-final class MainCell: UICollectionViewCell {
+final class MainCell: UICollectionViewCell { // надо будет переименовать в WorkoutCell
 
     private struct Constants {
         static let cellColor: UIColor = UIColor(
@@ -117,14 +117,12 @@ final class MainCell: UICollectionViewCell {
     // MARK: - Configure
 
     public func configure(
-        title: String,
-        exerciseCount: Int,
-        minutes: Int
+        workoutModel: WorkoutModel
     ) {
-        titleLabel.text = title
-        dateLabel.text = "Today, 9:05 AM"
-        exerciseLabel.text = "\(exerciseCount) Exercises"
-        timerLabel.text = "\(minutes) mins"
+        titleLabel.text = workoutModel.title
+        dateLabel.text = workoutModel.date.formatted(date: .abbreviated, time: .shortened)
+        exerciseLabel.text = "\(workoutModel.exercises.count) Exercises"
+        timerLabel.text = "\(workoutModel.durationMinutes) mins"
     }
 
     // MARK: - Layout

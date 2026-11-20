@@ -3,11 +3,23 @@
 //
 
 import UIKit
+import SwiftData
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
+    let modelContainer: ModelContainer = {
+        let schema = Schema([WorkoutModel.self, ExerciseModel.self, ApproachModel.self])
+        let config = ModelConfiguration(schema: schema)
 
+        do {
+            return try ModelContainer(for: schema, configurations: [config])
+        } catch {
+            fatalError("It was not possible to create ModelContainer: \(error)")
+        }
+    }()
+
+    lazy var modelContext = ModelContext(modelContainer)
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
