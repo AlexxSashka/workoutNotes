@@ -3,15 +3,28 @@
 //
 
 import UIKit
+import SwiftData
 
 class WorkoutController: UIViewController {
 
+    private let modelContext: ModelContext
+    private var workouts: [WorkoutModel] = []
+
+    init(
+        modelContext: ModelContext
+    ) {
+        self.modelContext = modelContext
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     private struct Constants {
         static let cellHorizontalPadding: CGFloat = 20
         static let itemHeight: CGFloat = 40
     }
-
-    private var testData: [String] = ["Тест"]
 
     // MARK: - Subviews
 
@@ -46,6 +59,7 @@ class WorkoutController: UIViewController {
         view.backgroundColor = .secondarySystemBackground
         setupTitle()
         setupCollectionView()
+        loadWorkouts()
     }
 
     // MARK: - Layout
@@ -102,6 +116,7 @@ class WorkoutController: UIViewController {
             title: "Добавить",
             style: .default
         ) { [weak self] _ in
+
             guard
                 let self,
                 let addText = alertController.textFields?.first?.text?.trimmingCharacters(in: .whitespacesAndNewlines),
@@ -110,11 +125,19 @@ class WorkoutController: UIViewController {
                 return
             }
 
-            self.testData.append(addText)
+            let workout = WorkoutModel(
+                title: addText,
+                date: .now,
+                durationMinutes: 0
+            )
+            modelContext.insert(workout)
 
-            let indexPath = IndexPath(item: testData.count - 1, section: 0)
-            self.collectionView.performBatchUpdates {
-                self.collectionView.insertItems(at: [indexPath])
+            do {
+                try modelContext.save()
+                loadWorkouts()
+            } catch {
+                print("Ошибка добавления \(error)")
+                // надо сделать нормальный алерт
             }
         }
         let cancelAction = UIAlertAction(title: "Отмена", style: .cancel)
@@ -129,7 +152,7 @@ class WorkoutController: UIViewController {
 extension WorkoutController: UICollectionViewDataSource{
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return testData.count
+        return workouts.count
     }
     
     func collectionView(
@@ -147,9 +170,7 @@ extension WorkoutController: UICollectionViewDataSource{
         }
 
         cell.configure(
-            title: testData[indexPath.item],
-            exerciseCount: 5,
-            minutes: 40
+            workoutModel: workouts[indexPath.item]
         )
 
         return cell
@@ -172,6 +193,19 @@ extension WorkoutController: UICollectionViewDelegateFlowLayout {
     func collectionView(
         _ collectionView: UICollectionView,
         didSelectItemAt indexPath: IndexPath) {
-            print("Нажали на \(testData[indexPath.item])")
+            print("Нажали на \(workouts[indexPath.item].title)")
+    }
+}
+
+    // MARK: - Work with SwiftData
+
+private extension WorkoutController {
+
+    private func loadWorkouts() {
+        let descriptor = FetchDescriptor<WorkoutModel>(
+            sortBy: [SortDescriptor(\.date, order: .reverse)]
+        )
+        workouts = (try? modelContext.fetch(descriptor)) ?? []
+        collectionView.reloadData()
     }
 }
