@@ -3,6 +3,7 @@
 //
 
 import UIKit
+import SwiftData
 
 final class WorkoutDetailController : UIViewController {
 
@@ -35,11 +36,16 @@ final class WorkoutDetailController : UIViewController {
     // MARK: - Model
 
     let workout: WorkoutModel
+    let modelContext: ModelContext
 
     // MARK: Init
 
-    init(workout: WorkoutModel) {
+    init(
+        modelContext: ModelContext,
+        workout: WorkoutModel
+    ) {
         self.workout = workout
+        self.modelContext = modelContext
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -80,17 +86,34 @@ final class WorkoutDetailController : UIViewController {
             message: nil,
             preferredStyle: .alert
         )
+        let oldTitle = self.workout.title
 
         alertController.addTextField { textField in
-            textField.text = self.workout.title
+            textField.text = oldTitle
+            textField.placeholder = "Название тренировки"
             textField.autocapitalizationType = .sentences
         }
 
         let saveAction = UIAlertAction(
             title: "Сохранить",
             style: .default
-        ) { _ in
-            print("Жопа")
+        ) { [weak self] _ in
+            guard
+                let self,
+                let newTitle = alertController.textFields?.first?.text?.trimmingCharacters(in: .whitespacesAndNewlines),
+                !newTitle.isEmpty,
+                oldTitle != newTitle
+            else {
+                return
+            }
+
+            self.workout.title = newTitle
+            do {
+                try self.modelContext.save()
+                titleLabel.text = newTitle
+            } catch {
+                print("Не получилось изменить название: \(error)")
+            }
         }
         let cancelAction = UIAlertAction(title: "Отменить", style: .cancel)
 

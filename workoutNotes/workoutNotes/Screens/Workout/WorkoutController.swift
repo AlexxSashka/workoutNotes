@@ -59,6 +59,11 @@ class WorkoutController: UIViewController {
         view.backgroundColor = .secondarySystemBackground
         setupTitle()
         setupCollectionView()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
         loadWorkouts()
     }
 
@@ -81,7 +86,7 @@ class WorkoutController: UIViewController {
 
         rightButton.addTarget(
             self,
-            action: #selector(didTapAddTrainingButton),
+            action: #selector(didTapAddWorkoutButton),
             for: .touchUpInside
         )
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: rightButton)
@@ -100,7 +105,7 @@ class WorkoutController: UIViewController {
     }
 
     @objc
-    private func didTapAddTrainingButton() {
+    private func didTapAddWorkoutButton() {
         let alertController = UIAlertController(
             title: "Добавить тренировку",
             message: nil,
@@ -194,7 +199,10 @@ extension WorkoutController: UICollectionViewDelegateFlowLayout {
         _ collectionView: UICollectionView,
         didSelectItemAt indexPath: IndexPath
     ) {
-        let detailController = WorkoutDetailController(workout: workouts[indexPath.item])
+        let detailController = WorkoutDetailController(
+            modelContext: modelContext,
+            workout: workouts[indexPath.item]
+        )
         navigationController?.pushViewController(detailController, animated: true)
     }
 
