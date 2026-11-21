@@ -122,7 +122,11 @@ final class MainCell: UICollectionViewCell { // надо будет переим
         titleLabel.text = workoutModel.title
         dateLabel.text = workoutModel.date.formatted(date: .abbreviated, time: .shortened)
         exerciseLabel.text = "\(workoutModel.exercises.count) Exercises"
-        timerLabel.text = "\(workoutModel.durationMinutes) mins"
+        if let duration = workoutModel.durationMinutes {
+            timerLabel.text = "\(duration) mins"
+        } else {
+            timerLabel.text = "-"
+        }
     }
 
     // MARK: - Layout

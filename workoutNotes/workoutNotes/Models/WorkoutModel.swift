@@ -9,14 +9,14 @@ import SwiftData
 final class WorkoutModel {
     var title: String
     var date: Date
-    var durationMinutes: Int
+    var durationMinutes: Int? = nil
 
     @Relationship(deleteRule: .cascade) var exercises: [ExerciseModel]
 
     init(
         title: String,
         date: Date,
-        durationMinutes: Int
+        durationMinutes: Int? = nil
     ) {
         self.title = title
         self.date = date

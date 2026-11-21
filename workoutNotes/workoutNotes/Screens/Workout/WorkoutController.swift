@@ -59,6 +59,11 @@ class WorkoutController: UIViewController {
         view.backgroundColor = .secondarySystemBackground
         setupTitle()
         setupCollectionView()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
         loadWorkouts()
     }
 
@@ -81,7 +86,7 @@ class WorkoutController: UIViewController {
 
         rightButton.addTarget(
             self,
-            action: #selector(didTapAddTrainingButton),
+            action: #selector(didTapAddWorkoutButton),
             for: .touchUpInside
         )
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: rightButton)
@@ -100,7 +105,7 @@ class WorkoutController: UIViewController {
     }
 
     @objc
-    private func didTapAddTrainingButton() {
+    private func didTapAddWorkoutButton() {
         let alertController = UIAlertController(
             title: "Добавить тренировку",
             message: nil,
@@ -128,7 +133,7 @@ class WorkoutController: UIViewController {
             let workout = WorkoutModel(
                 title: addText,
                 date: .now,
-                durationMinutes: 0
+                durationMinutes: nil
             )
             modelContext.insert(workout)
 
@@ -192,8 +197,38 @@ extension WorkoutController: UICollectionViewDelegateFlowLayout {
 
     func collectionView(
         _ collectionView: UICollectionView,
-        didSelectItemAt indexPath: IndexPath) {
-            print("Нажали на \(workouts[indexPath.item].title)")
+        didSelectItemAt indexPath: IndexPath
+    ) {
+        let detailController = WorkoutDetailController(
+            modelContext: modelContext,
+            workout: workouts[indexPath.item]
+        )
+        navigationController?.pushViewController(detailController, animated: true)
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        contextMenuConfigurationForItemAt indexPath: IndexPath,
+        point: CGPoint
+    ) -> UIContextMenuConfiguration? {
+
+        return UIContextMenuConfiguration(
+            identifier: nil,
+            previewProvider: nil
+        ) { [weak self] _ in
+            let deleteAction = UIAction(
+                title: "Удалить",
+                image: UIImage(systemName: "trash.fill"),
+                attributes: .destructive
+            ) { [weak self] _ in
+                self?.deleteWorkout(indexPath: indexPath)
+            }
+
+            return UIMenu(
+                title: "",
+                children: [deleteAction]
+            )
+        }
     }
 }
 
@@ -207,5 +242,20 @@ private extension WorkoutController {
         )
         workouts = (try? modelContext.fetch(descriptor)) ?? []
         collectionView.reloadData()
+    }
+
+    private func deleteWorkout(indexPath: IndexPath) {
+
+        let workout = workouts[indexPath.item]
+
+        modelContext.delete(workout)
+
+        do {
+            try modelContext.save()
+            workouts.remove(at: indexPath.item)
+            collectionView.deleteItems(at: [indexPath])
+        } catch {
+            print("Ошибка удаления \(error)")
+        }
     }
 }

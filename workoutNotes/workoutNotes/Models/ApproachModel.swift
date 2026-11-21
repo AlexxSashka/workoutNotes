@@ -6,17 +6,20 @@ import SwiftData
 
 @Model
 final class ApproachModel {
-    var weight: Int
-    var amount: Int
-    var complexity: Complexity
+    var weight: Int = 0
+    var amount: Int = 0
+    var isDone: Bool = false
+    var complexity: Complexity?
 
     init(
-        weight: Int,
-        amount: Int,
-        complexity: Complexity
+        weight: Int = 0,
+        amount: Int = 0,
+        isDone: Bool = false,
+        complexity: Complexity? = nil
     ) {
         self.weight = weight
         self.amount = amount
+        self.isDone = isDone
         self.complexity = complexity
     }
 }
