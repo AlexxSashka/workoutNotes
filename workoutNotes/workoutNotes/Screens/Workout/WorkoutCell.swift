@@ -3,7 +3,7 @@
 //
 import UIKit
 
-final class MainCell: UICollectionViewCell { // надо будет переименовать в WorkoutCell
+final class WorkoutCell: UICollectionViewCell { // надо будет переименовать в WorkoutCell
 
     private struct Constants {
         static let cellColor: UIColor = UIColor(
@@ -59,6 +59,7 @@ final class MainCell: UICollectionViewCell { // надо будет переим
         titleLabel.textColor = .white
         titleLabel.font = .systemFont(ofSize: 20, weight: .semibold)
         titleLabel.textAlignment = .left
+        titleLabel.lineBreakMode = .byTruncatingTail
 
         contentView.addSubview(titleLabel)
     }
@@ -133,18 +134,15 @@ final class MainCell: UICollectionViewCell { // надо будет переим
 
     public override func layoutSubviews() {
 
-        let titleLabelSize = titleLabel.sizeThatFits(
-            CGSize(
-                width: contentView.frame.width / 2,
-                height: 40
-            )
-        )
-
         titleLabel.frame = .init(
-            x: 10,
-            y: 10,
-            width: titleLabelSize.width,
-            height: titleLabelSize.height
+            origin: .init(
+                x: 10,
+                y: 10
+            ),
+            size: .init(
+                width: contentView.frame.width - 20,
+                height: 28
+            )
         )
 
         dateLabel.frame = .init(

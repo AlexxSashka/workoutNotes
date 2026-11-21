@@ -6,5 +6,9 @@ import UIKit
 
 class ExercisesController: UIViewController {
 
-    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        title = "Exercises"
+    }
 }
