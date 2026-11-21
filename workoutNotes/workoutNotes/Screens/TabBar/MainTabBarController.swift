@@ -33,9 +33,11 @@ class MainTabBarController: UITabBarController {
             )
         )
         workoutController.tabBarItem.image = Constants.workoutControllerImage
+        workoutController.tabBarItem.title = "Workouts"
 
         let exercisesController = UINavigationController(rootViewController: ExercisesController())
         exercisesController.tabBarItem.image = Constants.exercisesControllerImage
+        exercisesController.tabBarItem.title = "Exercises"
 
         viewControllers = [workoutController, exercisesController]
     }

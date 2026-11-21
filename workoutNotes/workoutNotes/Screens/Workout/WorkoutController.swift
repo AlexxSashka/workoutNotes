@@ -96,8 +96,8 @@ class WorkoutController: UIViewController {
         view.addSubview(collectionView)
 
         collectionView.register(
-            MainCell.self,
-            forCellWithReuseIdentifier: MainCell.reuseIdentifier
+            WorkoutCell.self,
+            forCellWithReuseIdentifier: WorkoutCell.reuseIdentifier
         )
 
         collectionView.dataSource = self
@@ -167,9 +167,9 @@ extension WorkoutController: UICollectionViewDataSource{
 
         guard
             let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: MainCell.reuseIdentifier,
+                withReuseIdentifier: WorkoutCell.reuseIdentifier,
                 for: indexPath
-            ) as? MainCell
+            ) as? WorkoutCell
         else {
             return UICollectionViewCell()
         }
@@ -216,6 +216,59 @@ extension WorkoutController: UICollectionViewDelegateFlowLayout {
             identifier: nil,
             previewProvider: nil
         ) { [weak self] _ in
+
+            let editAction = UIAction(
+                title: "Редактировать",
+                image: UIImage(systemName: "pencil")
+            ) { [weak self] _ in
+
+                let workout = self?.workouts[indexPath.item]
+                let oldTitle = workout?.title
+
+                let alertController = UIAlertController(
+                    title: "Редактирование",
+                    message: nil,
+                    preferredStyle: .alert
+                )
+
+                alertController.addTextField { textField in
+                    textField.placeholder = "Название тренировки"
+                    textField.autocapitalizationType = .sentences
+                    textField.text = oldTitle
+                }
+
+                let saveAction = UIAlertAction(
+                    title: "Сохранить",
+                    style: .default
+                ) { [weak self] _ in
+
+                    guard
+                        let self,
+                        let newTitle = alertController.textFields?.first?.text?.trimmingCharacters(in: .whitespacesAndNewlines),
+                        !newTitle.isEmpty, // добавить в данном случае алерт с предложением удалить тренировку
+                        oldTitle != newTitle
+                    else {
+                        return
+                    }
+
+                    workout?.title = newTitle
+
+                    do {
+                        try self.modelContext.save()
+                        self.collectionView.reloadItems(at: [indexPath])
+                    } catch {
+                        print("Не получилось изменить название: \(error)")
+                    }
+                }
+
+                let cancelAction = UIAlertAction(title: "Отмена", style: .cancel)
+
+                alertController.addAction(saveAction)
+                alertController.addAction(cancelAction)
+
+                self?.present(alertController, animated: true)
+            }
+
             let deleteAction = UIAction(
                 title: "Удалить",
                 image: UIImage(systemName: "trash.fill"),
@@ -226,7 +279,7 @@ extension WorkoutController: UICollectionViewDelegateFlowLayout {
 
             return UIMenu(
                 title: "",
-                children: [deleteAction]
+                children: [editAction, deleteAction]
             )
         }
     }

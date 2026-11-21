@@ -154,19 +154,15 @@ final class WorkoutDetailController : UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        let titleSize = titleLabel.sizeThatFits(
-            CGSize(
-                width: view.frame.width,
-                height: 40
-            )
-        )
-
         titleLabel.frame = .init(
             origin: .init(
                 x: 10,
                 y: view.safeAreaInsets.top
             ),
-            size: titleSize
+            size: .init(
+                width: view.frame.width - 10,
+                height: 28
+            )
         )
 
         dateIcon.frame = .init(
