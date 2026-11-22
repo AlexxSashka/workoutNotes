@@ -53,12 +53,17 @@ class WorkoutController: UIViewController {
         return collectionView
     }()
 
+    private lazy var placeholderView = WorkoutPlaceholderView() { [weak self] in
+        self?.didTapAddWorkoutButton()
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         view.backgroundColor = .secondarySystemBackground
         setupTitle()
         setupCollectionView()
+        setupPlaceholder()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -78,6 +83,13 @@ class WorkoutController: UIViewController {
                 width: view.bounds.width,
                 height: view.bounds.height
             )
+        )
+
+        placeholderView.frame = .init(
+            x: view.frame.width / 2 - 150,
+            y: view.frame.height / 2 - 150,
+            width: 300,
+            height: 200
         )
     }
 
@@ -102,6 +114,11 @@ class WorkoutController: UIViewController {
 
         collectionView.dataSource = self
         collectionView.delegate = self
+    }
+
+    private func setupPlaceholder() {
+        placeholderView.isHidden = true
+        view.addSubview(placeholderView)
     }
 
     @objc
@@ -295,6 +312,7 @@ private extension WorkoutController {
         )
         workouts = (try? modelContext.fetch(descriptor)) ?? []
         collectionView.reloadData()
+        placeholderView.isHidden = !workouts.isEmpty
     }
 
     private func deleteWorkout(indexPath: IndexPath) {
@@ -307,6 +325,8 @@ private extension WorkoutController {
             try modelContext.save()
             workouts.remove(at: indexPath.item)
             collectionView.deleteItems(at: [indexPath])
+
+            placeholderView.isHidden = !workouts.isEmpty
         } catch {
             print("Ошибка удаления \(error)")
         }
