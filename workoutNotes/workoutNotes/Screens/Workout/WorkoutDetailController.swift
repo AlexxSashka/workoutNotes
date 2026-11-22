@@ -15,9 +15,7 @@ final class WorkoutDetailController : UIViewController {
         let imageConfig = UIImage.SymbolConfiguration(pointSize: 24, weight: .bold)
         let image = UIImage(systemName: "pencil",withConfiguration: imageConfig)
         button.setImage(image, for: .normal)
-        
-        button.layer.cornerRadius = 32
-        button.clipsToBounds = true
+        button.tintColor = .white
 
         return button
     }()
