@@ -15,23 +15,14 @@ final class WorkoutDetailController : UIViewController {
         let imageConfig = UIImage.SymbolConfiguration(pointSize: 24, weight: .bold)
         let image = UIImage(systemName: "pencil",withConfiguration: imageConfig)
         button.setImage(image, for: .normal)
-        
-        button.layer.cornerRadius = 32
-        button.clipsToBounds = true
+        button.tintColor = .white
 
         return button
     }()
 
     private let titleLabel = UILabel()
 
-    private let dateIcon = UIImageView()
-    private let dateLabel = UILabel()
-
-    private let timeIcon = UIImageView()
-    private let timeLabel = UILabel()
-
-    private let exerciseIcon = UIImageView()
-    private let exerciseLabel = UILabel()
+    private lazy var headerView = DetailHeaderView(workout: workout)
 
     // MARK: - Model
 
@@ -59,15 +50,15 @@ final class WorkoutDetailController : UIViewController {
         view.backgroundColor = .secondarySystemBackground
 
         setupTitle()
-        setupTitleFooter()
+        setupHeader()
     }
 
     // MAKR: - Setups
 
     private func setupTitle() {
         titleLabel.textColor = .white
-        titleLabel.font = .systemFont(ofSize: 25, weight: .bold)
-        titleLabel.text = workout.title
+        titleLabel.font = .systemFont(ofSize: 35, weight: .bold)
+        titleLabel.text = workout.workoutTitle
         titleLabel.textAlignment = .left
         view.addSubview(titleLabel)
 
@@ -79,6 +70,10 @@ final class WorkoutDetailController : UIViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: editRightButton)
     }
 
+    private func setupHeader() {
+        view.addSubview(headerView)
+    }
+
     @objc
     private func didTapEditButton() {
         let alertController = UIAlertController(
@@ -86,7 +81,7 @@ final class WorkoutDetailController : UIViewController {
             message: nil,
             preferredStyle: .alert
         )
-        let oldTitle = self.workout.title
+        let oldTitle = self.workout.workoutTitle
 
         alertController.addTextField { textField in
             textField.text = oldTitle
@@ -107,7 +102,7 @@ final class WorkoutDetailController : UIViewController {
                 return
             }
 
-            self.workout.title = newTitle
+            self.workout.workoutTitle = newTitle
             do {
                 try self.modelContext.save()
                 titleLabel.text = newTitle
@@ -123,32 +118,6 @@ final class WorkoutDetailController : UIViewController {
         present(alertController, animated: true)
     }
 
-    private func setupTitleFooter() {
-
-        dateIcon.image = UIImage(systemName: "calendar")
-        dateIcon.tintColor = .systemGreen
-        dateLabel.text = workout.date.relativeText
-        dateLabel.textColor = .white
-
-        timeIcon.image = UIImage(systemName: "clock")
-        timeIcon.tintColor = .systemGreen
-        timeLabel.textColor = .white
-        if let durationMinutes = workout.durationMinutes {
-            timeLabel.text = String(durationMinutes)
-        } else {
-            timeLabel.text = "-"
-        }
-
-        view.addSubview(dateIcon)
-        view.addSubview(dateLabel)
-
-        view.addSubview(timeIcon)
-        view.addSubview(timeLabel)
-
-        view.addSubview(exerciseIcon)
-        view.addSubview(exerciseLabel)
-    }
-
     // MARK: - Layout
 
     override func viewDidLayoutSubviews() {
@@ -161,62 +130,16 @@ final class WorkoutDetailController : UIViewController {
             ),
             size: .init(
                 width: view.frame.width - 10,
-                height: 28
+                height: 35
             )
         )
 
-        dateIcon.frame = .init(
-            x: 10,
-            y: titleLabel.frame.maxY + 10,
-            width: 24,
-            height: 24
-        )
-        let dateLabelSize = dateLabel.sizeThatFits(
-            CGSize(
-                width: 60,
-                height: 30
-            )
-        )
-        dateLabel.frame = .init(
-            x: dateIcon.frame.maxX + 5,
-            y: dateIcon.frame.origin.y,
-            width: dateLabelSize.width,
-            height: dateLabelSize.height
-        )
-
-        timeIcon.frame = .init(
-            x: dateLabel.frame.maxX + 5,
-            y: dateIcon.frame.origin.y,
-            width: 24,
-            height: 24
-        )
-        let timeLabelSize = timeLabel.sizeThatFits(
-            CGSize(
-                width: 30,
-                height: 30
-            )
-        )
-        timeLabel.frame = .init(
-            origin: .init(
-                x: timeIcon.frame.maxX + 3,
-                y: timeIcon.frame.origin.y
-            ),
-            size: timeLabelSize
+        headerView.frame = .init(
+            x: 0,
+            y: titleLabel.frame.maxY,
+            width: view.frame.width,
+            height: 40
         )
     }
 }
 
-
-private extension Date {
-    var relativeText: String {
-        let calendar = Calendar.current
-
-        if calendar.isDateInToday(self) {
-            return "Today, " + formatted(.dateTime.hour().minute())
-        } else if calendar.isDateInYesterday(self) {
-            return "Yesterday, " + formatted(.dateTime.hour().minute())
-        } else {
-            return formatted(.dateTime.month(.abbreviated).day().hour().minute())
-        }
-    }
-}

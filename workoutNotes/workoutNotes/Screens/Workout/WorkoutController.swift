@@ -148,10 +148,10 @@ class WorkoutController: UIViewController {
             }
 
             let workout = WorkoutModel(
-                title: addText,
-                date: .now,
-                durationMinutes: nil
+                workoutTitle: addText,
+                createWorkoutDate: .now
             )
+
             modelContext.insert(workout)
 
             do {
@@ -240,7 +240,7 @@ extension WorkoutController: UICollectionViewDelegateFlowLayout {
             ) { [weak self] _ in
 
                 let workout = self?.workouts[indexPath.item]
-                let oldTitle = workout?.title
+                let oldTitle = workout?.workoutTitle
 
                 let alertController = UIAlertController(
                     title: "Редактирование",
@@ -268,7 +268,7 @@ extension WorkoutController: UICollectionViewDelegateFlowLayout {
                         return
                     }
 
-                    workout?.title = newTitle
+                    workout?.workoutTitle = newTitle
 
                     do {
                         try self.modelContext.save()
@@ -308,7 +308,7 @@ private extension WorkoutController {
 
     private func loadWorkouts() {
         let descriptor = FetchDescriptor<WorkoutModel>(
-            sortBy: [SortDescriptor(\.date, order: .reverse)]
+            sortBy: [SortDescriptor(\.createWorkoutDate, order: .reverse)]
         )
         workouts = (try? modelContext.fetch(descriptor)) ?? []
         collectionView.reloadData()
