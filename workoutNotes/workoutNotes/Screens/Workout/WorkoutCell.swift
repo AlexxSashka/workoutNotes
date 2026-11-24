@@ -5,27 +5,77 @@ import UIKit
 
 final class WorkoutCell: UICollectionViewCell { // надо будет переименовать в WorkoutCell
 
-    private struct Constants {
-        static let cellColor: UIColor = UIColor(
-            red: 0xC4 / 255,
-            green: 0x7C / 255,
-            blue: 0x14 / 255,
-            alpha: 1.0
-        )
-    }
-
     static let reuseIdentifier = "WorkoutCell"
 
     // MARK: - Subviews
 
-    private let titleLabel = UILabel()
-    private let dateLabel = UILabel()
-    private let separatorView = UIView()
-    private let countExerciseImage = UIImageView() // change name
-    private let exerciseLabel = UILabel()
-    private let timerImage = UIImageView()
-    private let timerLabel = UILabel()
-    private let chevronImage = UIImageView()
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 20, weight: .semibold)
+        label.textAlignment = .left
+        label.lineBreakMode = .byTruncatingTail
+
+        return label
+    }()
+
+    private let dateLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 12, weight: .light)
+        label.textAlignment = .left
+
+        return label
+    }()
+
+    private let separatorView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+
+        return view
+    }()
+
+    private let exerciseCountImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "list.bullet.clipboard")
+        imageView.tintColor = .white
+
+        return imageView
+    }()
+
+    private let exerciseLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 12, weight: .medium)
+        label.textAlignment = .left
+
+        return label
+    }()
+
+    private let timerImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "stopwatch")
+        imageView.tintColor = .white
+
+        return imageView
+    }()
+
+    private let timerLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 12, weight: .medium)
+        label.textAlignment = .left
+
+        return label
+    }()
+
+    private let chevronImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "chevron.right")
+        imageView.tintColor = .white
+
+        return imageView
+    }()
 
     // MARK: - Init
 
@@ -33,14 +83,7 @@ final class WorkoutCell: UICollectionViewCell { // надо будет пере�
         super.init(frame: frame)
 
         setupView()
-        setupTitle()
-        setupDate()
-        setupSeparator()
-        setupExerciseCountImage()
-        setupExerciseLabel()
-        setupTimerImage()
-        setupTimerLabel()
-        setupChevronImage()
+        addSubviews()
     }
     
     required init?(coder: NSCoder) {
@@ -55,63 +98,14 @@ final class WorkoutCell: UICollectionViewCell { // надо будет пере�
         contentView.layer.cornerRadius = 20
     }
 
-    private func setupTitle() {
-        titleLabel.textColor = .white
-        titleLabel.font = .systemFont(ofSize: 20, weight: .semibold)
-        titleLabel.textAlignment = .left
-        titleLabel.lineBreakMode = .byTruncatingTail
-
+    private func addSubviews() {
         contentView.addSubview(titleLabel)
-    }
-
-    private func setupDate() {
-        dateLabel.textColor = .white
-        dateLabel.font = .systemFont(ofSize: 12, weight: .light)
-        dateLabel.textAlignment = .left
-
         contentView.addSubview(dateLabel)
-    }
-
-    private func setupSeparator() {
-        separatorView.backgroundColor = .white
-
         contentView.addSubview(separatorView)
-    }
-
-    private func setupExerciseCountImage() {
-        countExerciseImage.image = UIImage(systemName: "list.bullet.clipboard")
-        countExerciseImage.tintColor = .white
-
-        contentView.addSubview(countExerciseImage)
-    }
-
-    private func setupExerciseLabel() {
-        exerciseLabel.textColor = .white
-        exerciseLabel.font = .systemFont(ofSize: 12, weight: .medium)
-        exerciseLabel.textAlignment = .left
-
+        contentView.addSubview(exerciseCountImage)
         contentView.addSubview(exerciseLabel)
-    }
-
-    private func setupTimerImage() {
-        timerImage.image = UIImage(systemName: "stopwatch")
-        timerImage.tintColor = .white
-
         contentView.addSubview(timerImage)
-    }
-
-    private func setupTimerLabel() {
-        timerLabel.textColor = .white
-        timerLabel.font = .systemFont(ofSize: 12, weight: .medium)
-        timerLabel.textAlignment = .left
-
         contentView.addSubview(timerLabel)
-    }
-
-    private func setupChevronImage() {
-        chevronImage.image = UIImage(systemName: "chevron.right")
-        chevronImage.tintColor = .white
-
         contentView.addSubview(chevronImage)
     }
 
@@ -159,7 +153,7 @@ final class WorkoutCell: UICollectionViewCell { // надо будет пере�
             height: 0.5
         )
 
-        countExerciseImage.frame = .init(
+        exerciseCountImage.frame = .init(
             x: 10,
             y: separatorView.frame.maxY + 10,
             width: 24,
@@ -174,8 +168,8 @@ final class WorkoutCell: UICollectionViewCell { // надо будет пере�
         )
         exerciseLabel.frame = .init(
             origin: .init(
-                x: countExerciseImage.frame.maxX + 5,
-                y: countExerciseImage.frame.midY - exerciseLabelSize.height / 2
+                x: exerciseCountImage.frame.maxX + 5,
+                y: exerciseCountImage.frame.midY - exerciseLabelSize.height / 2
             ),
             size: exerciseLabelSize
         )
@@ -183,7 +177,7 @@ final class WorkoutCell: UICollectionViewCell { // надо будет пере�
         timerImage.frame = .init(
             origin: .init(
                 x: exerciseLabel.frame.maxX + 20,
-                y: countExerciseImage.frame.origin.y
+                y: exerciseCountImage.frame.origin.y
             ),
             size: CGSize(width: 24, height: 24)
         )
@@ -208,6 +202,18 @@ final class WorkoutCell: UICollectionViewCell { // надо будет пере�
                 y: timerImage.frame.origin.y
             ),
             size: CGSize(width: 10, height: 12)
+        )
+    }
+}
+
+private extension WorkoutCell {
+
+    private struct Constants {
+        static let cellColor: UIColor = UIColor(
+            red: 0xC4 / 255,
+            green: 0x7C / 255,
+            blue: 0x14 / 255,
+            alpha: 1.0
         )
     }
 }

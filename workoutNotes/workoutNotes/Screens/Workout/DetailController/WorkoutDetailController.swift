@@ -16,13 +16,49 @@ final class WorkoutDetailController : UIViewController {
         let image = UIImage(systemName: "pencil",withConfiguration: imageConfig)
         button.setImage(image, for: .normal)
         button.tintColor = .white
+        button.addTarget(
+            self,
+            action: #selector(didTapEditButton),
+            for: .touchUpInside
+        )
 
         return button
     }()
 
-    private let titleLabel = UILabel()
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 35, weight: .bold)
+        label.textAlignment = .left
 
-    private lazy var headerView = DetailHeaderView(workout: workout)
+        return label
+    }()
+
+    private lazy var headerView: DetailHeaderView = {
+        let header = DetailHeaderView(frame: .zero)
+        header.configure(workout: workout)
+
+        return header
+    }()
+
+    private let button: UIButton = {
+        let button = UIButton()
+
+        var config = UIButton.Configuration.filled()
+        config.baseBackgroundColor = .brown
+        config.baseForegroundColor = .white
+        config.cornerStyle = .large
+        config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+            var outgoing = incoming
+            outgoing.font = .systemFont(ofSize: 16, weight: .medium)
+
+            return outgoing
+        }
+
+        button.configuration = config
+
+        return button
+    }()
 
     // MARK: - Model
 
@@ -49,29 +85,17 @@ final class WorkoutDetailController : UIViewController {
 
         view.backgroundColor = .secondarySystemBackground
 
-        setupTitle()
-        setupHeader()
+        setup()
     }
 
     // MAKR: - Setups
 
-    private func setupTitle() {
-        titleLabel.textColor = .white
-        titleLabel.font = .systemFont(ofSize: 35, weight: .bold)
+    private func setup() {
         titleLabel.text = workout.workoutTitle
-        titleLabel.textAlignment = .left
-        view.addSubview(titleLabel)
 
-        editRightButton.addTarget(
-            self,
-            action: #selector(didTapEditButton),
-            for: .touchUpInside
-        )
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: editRightButton)
-    }
-
-    private func setupHeader() {
         view.addSubview(headerView)
+        view.addSubview(titleLabel)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: editRightButton)
     }
 
     @objc
