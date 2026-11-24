@@ -7,20 +7,23 @@ import SwiftData
 
 @Model
 final class WorkoutModel {
-    var title: String
-    var date: Date
-    var durationMinutes: Int? = nil
+    var workoutTitle: String
+    var createWorkoutDate: Date
+    var startWorkoutDate: Date? = nil
+    var endWorkoutDate: Date? = nil
 
     @Relationship(deleteRule: .cascade) var exercises: [ExerciseModel]
 
     init(
-        title: String,
-        date: Date,
-        durationMinutes: Int? = nil
+        workoutTitle: String,
+        createWorkoutDate: Date,
+        startWorkoutDate: Date? = nil,
+        endWorkoutDate: Date? = nil
     ) {
-        self.title = title
-        self.date = date
-        self.durationMinutes = durationMinutes
+        self.workoutTitle = workoutTitle
+        self.createWorkoutDate = createWorkoutDate
+        self.startWorkoutDate = startWorkoutDate
+        self.endWorkoutDate = endWorkoutDate
         self.exercises = []
     }
 }

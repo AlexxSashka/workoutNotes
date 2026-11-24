@@ -120,14 +120,14 @@ final class WorkoutCell: UICollectionViewCell { // надо будет пере�
     public func configure(
         workoutModel: WorkoutModel
     ) {
-        titleLabel.text = workoutModel.title
-        dateLabel.text = workoutModel.date.formatted(date: .abbreviated, time: .shortened)
+        titleLabel.text = workoutModel.workoutTitle
+        dateLabel.text = workoutModel.createWorkoutDate.formatted(date: .abbreviated, time: .shortened)
         exerciseLabel.text = "\(workoutModel.exercises.count) Exercises"
-        if let duration = workoutModel.durationMinutes {
-            timerLabel.text = "\(duration) mins"
-        } else {
-            timerLabel.text = "-"
-        }
+//        if let duration = workoutModel.durationMinutes {
+//            timerLabel.text = "\(duration) mins"
+//        } else {
+//            timerLabel.text = "-"
+//        } надо будет поправить
     }
 
     // MARK: - Layout
