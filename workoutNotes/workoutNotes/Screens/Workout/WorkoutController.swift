@@ -7,6 +7,48 @@ import SwiftData
 
 class WorkoutController: UIViewController {
 
+    // MARK: - Subviews
+
+    let rightAddWorkoutButton: UIButton = {
+        let button = UIButton()
+
+        let imageConfig = UIImage.SymbolConfiguration(pointSize: 24, weight: .bold)
+        let image = UIImage(systemName: "plus", withConfiguration: imageConfig)
+
+        button.setImage(image, for: .normal)
+        button.tintColor = .white
+
+        button.layer.cornerRadius = 32
+        button.clipsToBounds = true
+
+        button.addTarget(
+            self,
+            action: #selector(didTapAddWorkoutButton),
+            for: .touchUpInside
+        )
+
+        return button
+    }()
+
+    private let collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = .secondarySystemBackground
+
+        collectionView.register(
+            WorkoutCell.self,
+            forCellWithReuseIdentifier: WorkoutCell.reuseIdentifier
+        )
+
+        return collectionView
+    }()
+
+    private lazy var placeholderView = WorkoutPlaceholderView() { [weak self] in
+        self?.didTapAddWorkoutButton()
+    }
+
     private let modelContext: ModelContext
     private var workouts: [WorkoutModel] = []
 
@@ -19,42 +61,6 @@ class WorkoutController: UIViewController {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    private struct Constants {
-        static let cellHorizontalPadding: CGFloat = 20
-        static let itemHeight: CGFloat = 40
-    }
-
-    // MARK: - Subviews
-
-    let rightButton: UIButton = {
-        let button = UIButton()
-
-        let imageConfig = UIImage.SymbolConfiguration(pointSize: 24, weight: .bold)
-        let image = UIImage(systemName: "plus", withConfiguration: imageConfig)
-
-        button.setImage(image, for: .normal)
-        button.tintColor = .white
-
-        button.layer.cornerRadius = 32
-        button.clipsToBounds = true
-
-        return button
-    }()
-
-    private let collectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
-
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = .secondarySystemBackground
-
-        return collectionView
-    }()
-
-    private lazy var placeholderView = WorkoutPlaceholderView() { [weak self] in
-        self?.didTapAddWorkoutButton()
     }
 
     override func viewDidLoad() {
@@ -96,24 +102,14 @@ class WorkoutController: UIViewController {
     private func setupTitle() {
         title = "Workouts"
 
-        rightButton.addTarget(
-            self,
-            action: #selector(didTapAddWorkoutButton),
-            for: .touchUpInside
-        )
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: rightButton)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: rightAddWorkoutButton)
     }
 
     private func setupCollectionView() {
-        view.addSubview(collectionView)
-
-        collectionView.register(
-            WorkoutCell.self,
-            forCellWithReuseIdentifier: WorkoutCell.reuseIdentifier
-        )
-
         collectionView.dataSource = self
         collectionView.delegate = self
+
+        view.addSubview(collectionView)
     }
 
     private func setupPlaceholder() {
@@ -330,5 +326,12 @@ private extension WorkoutController {
         } catch {
             print("Ошибка удаления \(error)")
         }
+    }
+}
+
+private extension WorkoutController {
+    private struct Constants {
+        static let cellHorizontalPadding: CGFloat = 20
+        static let itemHeight: CGFloat = 40
     }
 }

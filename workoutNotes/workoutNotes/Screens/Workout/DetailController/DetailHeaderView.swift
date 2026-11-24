@@ -8,39 +8,50 @@ final class DetailHeaderView: UIView {
 
     // MARK: - Subviews
 
-    private let dateIcon = UIImageView()
-    private let dateLabel = UILabel()
+    private let dateIcon: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "calendar")
+        imageView.tintColor = .systemGreen
 
-    private let timeIcon = UIImageView()
-    private let timeLabel = UILabel()
+        return imageView
+    }()
+    private let dateLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+
+        return label
+    }()
+
+    private let timeIcon: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "clock")
+        imageView.tintColor = .systemGreen
+
+        return imageView
+    }()
+    private let timeLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .white
+
+        return label
+    }()
 
     private let exerciseIcon = UIImageView()
     private let exerciseLabel = UILabel()
 
-    private let workout: WorkoutModel
-
-    init(
-        workout: WorkoutModel
-    ) {
-        self.workout = workout
-        super.init(frame: .zero)
-
-        setup() // разнести на методы
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setup() {
-        dateIcon.image = UIImage(systemName: "calendar")
-        dateIcon.tintColor = .systemGreen
+    func configure(workout: WorkoutModel) {
         dateLabel.text = workout.createWorkoutDate.relativeText
-        dateLabel.textColor = .white
 
-        timeIcon.image = UIImage(systemName: "clock")
-        timeIcon.tintColor = .systemGreen
-        timeLabel.textColor = .white
+        // вот тут навести порядок
         if let startDate = workout.startWorkoutDate,
            let endDate = workout.endWorkoutDate {
             print("Заглушка \(startDate) и \(endDate)")
@@ -48,6 +59,9 @@ final class DetailHeaderView: UIView {
         } else {
             timeLabel.text = "---"
         }
+    }
+
+    private func setup() {
 
         addSubview(dateIcon)
         addSubview(dateLabel)

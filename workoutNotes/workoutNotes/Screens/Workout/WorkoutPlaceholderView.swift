@@ -6,47 +6,33 @@ import UIKit
 
 final class WorkoutPlaceholderView: UIView {
 
-    let imageView = UIImageView()
-    let titleLabel = UILabel()
-    let addWorkoutButton = UIButton()
+    // MARK: - Subviews
 
-    let addWorkoutAction: () -> Void
-
-    init(
-        addWorkoutAction: @escaping () -> Void
-    ) {
-        self.addWorkoutAction = addWorkoutAction
-        super.init(frame: .zero)
-
-        clipsToBounds = true
-
-        setupImageView()
-        setupTitleLabel()
-        setupAddWorkoutButton()
-    }
-
-    // MARK: - Setups
-
-    private func setupImageView() {
+    let imageView: UIImageView = {
         let config = UIImage.SymbolConfiguration(pointSize: 100)
-        imageView.image = UIImage(systemName: "dumbbell", withConfiguration: config)
+
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "dumbbell",withConfiguration: config)
         imageView.tintColor = .brown
         imageView.contentMode = .scaleAspectFit
 
-        addSubview(imageView)
-    }
 
-    private func setupTitleLabel() {
-        titleLabel.text = "Создай свою первую тренировку"
-        titleLabel.textColor = .white
-        titleLabel.font = .systemFont(ofSize: 18, weight: .semibold)
-        titleLabel.numberOfLines = 0
-        titleLabel.textAlignment = .center
+        return imageView
+    }()
 
-        addSubview(titleLabel)
-    }
+    let titleLabel: UILabel = {
+        let label = UILabel()
 
-    private func setupAddWorkoutButton() {
+        label.text = "Создай свою первую тренировку"
+        label.textColor = .white
+        label.font = .systemFont(ofSize: 18, weight: .semibold)
+        label.numberOfLines = 0
+        label.textAlignment = .center
+
+        return label
+    }()
+
+    let addWorkoutButton: UIButton = {
         var config = UIButton.Configuration.filled()
         config.title = "Добавить тренировку"
         config.baseBackgroundColor = .brown
@@ -60,11 +46,35 @@ final class WorkoutPlaceholderView: UIView {
             return outgoing
         }
 
-        addWorkoutButton.configuration = config
+        let button = UIButton()
+        button.configuration = config
 
-        addWorkoutButton.addTarget(self, action: #selector(didTapAddWorkout), for: .touchUpInside)
+        button.addTarget(
+            self,
+            action: #selector(didTapAddWorkout),
+            for: .touchUpInside
+        )
 
+        return button
+    }()
+
+    let addWorkoutAction: () -> Void
+
+    init(
+        addWorkoutAction: @escaping () -> Void
+    ) {
+        self.addWorkoutAction = addWorkoutAction
+        super.init(frame: .zero)
+
+        clipsToBounds = true
+
+        addSubview(imageView)
+        addSubview(titleLabel)
         addSubview(addWorkoutButton)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     @objc
@@ -72,11 +82,8 @@ final class WorkoutPlaceholderView: UIView {
         addWorkoutAction()
     }
 
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     override func layoutSubviews() {
+        super.layoutSubviews()
 
         let imageSize = imageView.image?.size ?? CGSize(width: 100, height: 100)
         imageView.frame = .init(
