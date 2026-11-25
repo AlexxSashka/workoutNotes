@@ -49,12 +49,6 @@ final class WorkoutPlaceholderView: UIView {
         let button = UIButton()
         button.configuration = config
 
-        button.addTarget(
-            self,
-            action: #selector(didTapAddWorkout),
-            for: .touchUpInside
-        )
-
         return button
     }()
 
@@ -67,6 +61,12 @@ final class WorkoutPlaceholderView: UIView {
         super.init(frame: .zero)
 
         clipsToBounds = true
+
+        addWorkoutButton.addTarget(
+            self,
+            action: #selector(didTapAddWorkout),
+            for: .touchUpInside
+        )
 
         addSubview(imageView)
         addSubview(titleLabel)
