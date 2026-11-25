@@ -20,11 +20,12 @@ class ExercisesController: UIViewController {
         button.layer.cornerRadius = 32
         button.clipsToBounds = true
 
-        button.addTarget(
-            self,
-            action: #selector(didTapAddExercise),
-            for: .touchUpInside
-        )
+        return button
+    }()
+
+    let startButton: UIButton = { // переназвать
+        let button = UIButton()
+
 
         return button
     }()
@@ -48,6 +49,12 @@ class ExercisesController: UIViewController {
     }
 
     private func setupAddExerciseButton() {
+
+        addExerciseButton.addTarget(
+            self,
+            action: #selector(didTapAddExercise),
+            for: .touchUpInside
+        )
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: addExerciseButton)
     }
 

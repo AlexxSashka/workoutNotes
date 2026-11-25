@@ -16,11 +16,6 @@ final class WorkoutDetailController : UIViewController {
         let image = UIImage(systemName: "pencil",withConfiguration: imageConfig)
         button.setImage(image, for: .normal)
         button.tintColor = .white
-        button.addTarget(
-            self,
-            action: #selector(didTapEditButton),
-            for: .touchUpInside
-        )
 
         return button
     }()
@@ -95,6 +90,12 @@ final class WorkoutDetailController : UIViewController {
 
         view.addSubview(headerView)
         view.addSubview(titleLabel)
+
+        editRightButton.addTarget(
+            self,
+            action: #selector(didTapEditButton),
+            for: .touchUpInside
+        )
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: editRightButton)
     }
 
